@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        text-align: center;
+    }
+    .box {
+        width: 80px;
+        height: 80px;
+        margin: 5px;
+        font-size: 24px;
+        cursor: pointer;
+        background-color: #dddddd;
+        color: #333333;
+        border: none;
+        border-radius: 5px;
+    }
+    .score {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    #restart {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<h1>Diamond Game</h1>
+<div id="container"></div>
+<div id="score" class="score">Points: 0</div>
+<button id="restart">Restart</button>
+
+<script>
+    var num_boxes = 16;
+    var points = 0;
+    var board = [];
+
+    function createBoard() {
+        var container = document.getElementById("container");
+        container.innerHTML = "";
+        for (var i = 0; i < num_boxes; i++) {
+            var button = document.createElement("button");
+            button.textContent = " ";
+            button.className = "box";
+            button.onclick = function() { reveal(this); };
+            container.appendChild(button);
+        }
+    }
+
+    function placeBombsAndDiamonds() {
+        for (var i = 0; i < num_boxes; i++) {
+            var isBomb = Math.random() < 0.5;
+            board.push(isBomb ? "bomb" : "diamond");
+        }
+    }
+
+    function reveal(button) {
+        var index = Array.from(button.parentNode.children).indexOf(button);
+        var box_type = board[index];
+        if (box_type === "bomb") {
+            button.textContent = "💣";
+            button.disabled = true;
+            button.style.backgroundColor = "#FF6347";
+            endGame();
+        } else {
+            button.textContent = "💎";
+            button.disabled = true;
+            button.style.backgroundColor = "#7FFF00";
+            points++;
+            document.getElementById("score").textContent = "Points: " + points;
+            if (points === 8) {
+                endGame();
+            }
+        }
+    }
+
+    function endGame() {
+        var buttons = document.getElementsByClassName("box");
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
+        if (points === 8) {
+            alert("Congratulations! You found all the diamonds.");
+        } else {
+            alert("Game over! You hit a bomb.");
+        }
+    }
+
+    function restartGame() {
+        points = 0;
+        document.getElementById("score").textContent = "Points: " + points;
+        board = [];
+        createBoard();
+        placeBombsAndDiamonds();
+    }
+
+    document.getElementById("restart").addEventListener("click", restartGame);
+
+    createBoard();
+    placeBombsAndDiamonds();
+</script>
+</body>
+</html>
